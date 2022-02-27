@@ -1,0 +1,80 @@
+#====================================================================
+#       Macro & Assembler flags
+#====================================================================
+
+#STADDR = 100000
+STADDR = 4000
+
+# For a listing, add -l<listfile> (overwrites for each file though!)
+MACFLAGS = -fb -i../include
+#MACFLAGS = -fb -g -llisting.txt -i../include
+
+#ALNFLAGS = -w -v -v -m -e -rd -g -l -a $(STADDR) x x
+# to get a map file, add -m and use make >out.txt, then read out.txt
+ALNFLAGS = -w -v -e -rq -a $(STADDR) x x
+
+#====================================================================
+#       Default Rules
+#====================================================================
+.SUFFIXES:      .o .s
+
+.s.o:
+	mac $(MACFLAGS) $<
+
+#====================================================================
+#       EXECUTABLES
+#====================================================================
+
+OBJ = startup.o jagmand.o calcmand.o mou_list.o
+ 
+jaglion.cof: clean $(OBJ)
+	aln $(ALNFLAGS) -o jaglion.cof $(OBJ)
+
+#############################################################################
+
+startup.o: startup.s 
+
+clean:
+	del *.o
+	del jaglion.cof
+	
+	
+#aln: illegal option argument: --help
+#Usage: aln [-options] <files|-x file|-i[i] <fname> <label>>
+#Where options are:
+#?: print this
+#a <text> <data> <bss>: output absolute file
+	#hex value: segment address
+	#r: relocatable segment
+	#x: contiguous segment
+#b: don't remove multiply defined local labels
+#d: wait for key after link
+#e: output COFF (absolute only)
+#f: add file symbols
+#g: output source-level debugging
+#h <value>: set header values
+#k <symbol>: add to kill list
+#l: add local symbols
+#m: produce load symbols map
+#n: output no file header to .abs file
+#n#: output <#> eprom files for Jaguar Cartridge (*.h?)
+#o <fname>: set output name
+#p: partial link
+#q: partial link with nail down BSS
+#r<size>: section alignment size
+	#w: word (2 bytes)
+	#l: long (4 bytes)
+	#p: phrase (8 bytes, default alignment)
+	#d: double phrase (16 bytes)
+	#q: quad phrase (32 bytes)
+#s: output only global symbols
+#u: don't abort on unresolved symbols
+#v: set verbose mode (can repeat)
+#w: set warnings (on multiple defines, etc...)
+#y <fname>: set library path
+#and
+#c <fname>: add contents of <fname> to command line
+#i <fname> <label>: incbin <fname> and set <label> (trunc to 8 chars)
+#ii <fname> <label>: incbin <fname> and set <label> (no trunc)
+#x <fname>: take <fname> symbols in file order
+#You must specify library files after all object files!
